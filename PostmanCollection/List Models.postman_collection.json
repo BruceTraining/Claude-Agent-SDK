@@ -1,0 +1,40 @@
+{
+  "info": {
+    "_postman_id": "7909396a-7520-4884-a29c-05984d2ff084",
+    "name": "List Models",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41710834"
+  },
+  "item": [
+    {
+      "name": "Get a List of Models",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "anthropic-version",
+            "value": "2023-06-01"
+          },
+          {
+            "key": "X-Api-Key",
+            "value": "{{ANTHROPIC_API_KEY}}"
+          }
+        ],
+        "url": {
+          "raw": "https://api.anthropic.com/v1/models",
+          "protocol": "https",
+          "host": [
+            "api",
+            "anthropic",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "models"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

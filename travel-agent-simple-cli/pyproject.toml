@@ -1,0 +1,13 @@
+[project]
+name = "flight-agent-naive"
+version = "0.1.0"
+description = "A naive single-shot flight booking agent using claude-agent-sdk query() — demonstrating why this approach fails for multi-turn conversations."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "claude-agent-sdk>=0.2.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+flight-agent = "main:main"
