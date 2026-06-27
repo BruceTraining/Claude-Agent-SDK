@@ -110,7 +110,7 @@ limitation firsthand.
 ## Project Structure
 
 ```
-flight-agent-naive/
+travel-agent-simple-cli/
 ├── .env.example      # Template for API key configuration
 ├── .gitignore         # Keeps .env and Python artifacts out of git
 ├── main.py            # The naive agent — heavily commented to explain the failure
