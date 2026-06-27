@@ -1,23 +1,9 @@
-# Flight Booking Agent — ClaudeSDKClient Version
+# travel-agent-better — ClaudeSDKClient Version
 
-> **✅ This is the correct approach.** After seeing the naive `query()` examples
+> ** This is the correct approach.** After seeing the naive `query()` examples
 > fail, this version shows how `ClaudeSDKClient` with a custom tool enables
 > real multi-turn conversations for flight booking.
 
-## What Changed (and What Didn't)
-
-The system prompt is nearly identical to the naive version. The instructions
-to Claude — "collect these five pieces of information, be friendly, don't
-guess" — didn't change. **The prompt was never the problem.**
-
-What changed is the architecture:
-
-| Component | Naive Version | This Version |
-|---|---|---|
-| SDK function | `query()` — single-shot | `ClaudeSDKClient` — multi-turn |
-| Conversation | One exchange, then dead | Persistent across messages |
-| Tools | None | `search_flights` via `@tool` decorator |
-| User experience | Dead end after first response | Natural back-and-forth dialogue |
 
 ## How It Works
 
@@ -95,7 +81,7 @@ same Python process as the Flask app.
 
 Since Flask handles each HTTP request independently, we can't keep a live
 `ClaudeSDKClient` connection across requests. A naive fix would be to store the
-full conversation history and *replay* it through the API on every request —
+full conversation history and *replay* it through the API on every request,
 but that means redundant API calls and re-executed tool calls that grow with
 every turn.
 
@@ -107,9 +93,6 @@ Instead, this version uses the SDK's built-in **session persistence**:
   SDK loads the transcript from the store and spawns the CLI with
   `--resume <session_id>`, so the subprocess fast-loads the prior context.
 
-No replay loop, no redundant API calls, no re-executed tools. See
-[`HANDOFF.md`](HANDOFF.md) for the design rationale and the alternatives that
-were considered.
 
 `InMemorySessionStore` is perfect for demos but loses all data when the process
 exits. For production you would implement the `SessionStore` protocol
@@ -132,10 +115,10 @@ cd travel-agent-better
 ### 2. Create your environment file
 
 ```bash
-cp .env.example .env
+touch .env
 ```
 
-Edit `.env` and replace `your-api-key-here` with your actual Anthropic API key:
+Edit `.env` and add your actual Anthropic API key:
 
 ```
 ANTHROPIC_API_KEY=sk-ant-...
@@ -163,14 +146,10 @@ straight to confirmation and searching.
 
 ```
 travel-agent-better/
-├── .env.example      # Template for API key configuration
-├── .gitignore        # Keeps .env and Python artifacts out of git
 ├── agent.py          # Agent logic — system prompt, search_flights tool,
 │                     #   MCP server, and session-persistent conversation handler
 ├── app.py            # Flask app — routes, browser/SDK session mapping
 ├── pyproject.toml    # Project config and dependencies (used by uv)
-├── HANDOFF.md        # Design notes on eliminating conversation replay
-├── tutorial.md       # Comparative tutorial vs. the naive query() version
 └── README.md         # This file
 ```
 
@@ -193,26 +172,13 @@ invoke it based on the conversation.
 
 When Claude calls `search_flights`, the SDK automatically executes the tool,
 feeds the result back to Claude, and lets Claude generate the final response.
-You don't write that loop — the SDK handles it. This is what makes the Agent
+You don't write that loop because the SDK handles it. This is what makes the Agent
 SDK more than just an API wrapper.
 
 ### 4. System Prompt Didn't Change
 
 Compare the system prompt in this version to the naive version. They're nearly
-identical. The prompt was always good — the delivery mechanism was the problem.
+identical. The prompt was always good but the delivery mechanism was the problem.
 The right architecture (ClaudeSDKClient + tools) makes the same prompt work
 the way it was intended to.
 
-## What's Next
-
-This example demonstrates the core pattern. To build a production flight
-booking agent, you would:
-
-- Replace the mock `search_flights` data with a real flight API
-- Add a `book_flight` tool for completing the reservation
-- Use WebSockets or SSE for real-time streaming responses
-- Use Managed Agents for persistent server-side sessions
-- Add authentication and user accounts
-- Replace `InMemorySessionStore` with a `SessionStore` backed by a database,
-  Redis, or the filesystem so conversations survive restarts and scale beyond
-  a single process
