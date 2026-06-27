@@ -73,7 +73,7 @@ dialogue, you need `ClaudeSDKClient` instead.
 ### 1. Clone or navigate to this project
 
 ```bash
-cd flight-agent-naive
+cd travel-agent-simple-cli
 ```
 
 ### 2. Create your environment file
